@@ -1,0 +1,63 @@
+version: "3"
+services:
+  mongod001:
+    hostname: mongors001
+    container_name: mongors001
+    image: mongo:4.1.11 
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - "30001:27017"
+    networks:
+      - default
+      - mongo_cluster
+    # extra_hosts:
+    #   - "mongors001:172.30.0.2"
+    #   - "mongors002:172.30.0.3"
+    #   - "mongors003:172.30.0.4"
+  mongod002:
+    hostname: mongors002
+    container_name: mongors002
+    image: mongo:4.1.11
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - "30002:27017"
+    networks:
+      - default
+      - mongo_cluster
+    depends_on:
+      - mongod001
+    # extra_hosts:
+    #   - "mongors001:172.30.0.2"
+    #   - "mongors002:172.30.0.3"
+    #   - "mongors003:172.30.0.4"
+  mongod003:
+    hostname: mongors003
+    container_name: mongors003
+    image: mongo:4.1.11
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - "30003:27017"
+    networks:
+      - default
+      - mongo_cluster
+    depends_on:
+      - mongod002
+    # extra_hosts:
+    #   - "mongors001:172.30.0.2"
+    #   - "mongors002:172.30.0.3"
+    #   - "mongors003:172.30.0.4"
+
+    
+
+networks:
+  mongo_cluster:
+    external: true
+  # mongo_cluster:
+  #   driver: bridge
+  #   ipam:
+  #    driver: default
+  #    config:
+  #      - subnet: 172.30.0.0/24
+
+# docker swarm init
+# docker network create --driver overlay --attachable mongo_cluster
